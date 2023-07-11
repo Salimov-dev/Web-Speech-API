@@ -61,14 +61,36 @@ const TextDefault = styled.span`
 const SpeachRecognition: FC = () => {
   const { transcript, resetTranscript } = useSpeechRecognition();
   const [withNumber, setNumber] = useState<string[]>([]);
-
   const empty = "Разрешите микрофон в браузере и начинайте говорить";
-  const textWithNumbers = withNumber.join(" ");
+  let textWithNumbers = withNumber.join(" ");
 
   const getRandomNumber = () => {
     return Math.floor(Math.random() * 100);
   };
 
+  // выводит только уникальные слова с уникальным номер, номер сохраняется
+  //   const addNumber = () => {
+  //     if (!transcript.length) {
+  //       return "";
+  //     }
+
+  //     const words = transcript.split(" ");
+  //     const updatedNumberedText = [...withNumber];
+
+  //     words.forEach((word: string, index: number) => {
+  //       const existingWord = updatedNumberedText.find((item) =>
+  //         item.startsWith(word)
+  //       );
+  //       if (!existingWord) {
+  //         const randomNumber = getRandomNumber();
+  //         updatedNumberedText[index] = word + randomNumber;
+  //       }
+  //     });
+
+  //     setNumber(updatedNumberedText);
+  //   };
+
+  // выводит все слова с уникальным номер, номер обновляется у каждого слова
   const addNumber = () => {
     if (!transcript.length) {
       return "";
@@ -78,16 +100,8 @@ const SpeachRecognition: FC = () => {
     const updatedNumberedText = [...withNumber];
 
     words.forEach((word: string, index: number) => {
-      const existingWord = updatedNumberedText.find((item) =>
-        item.startsWith(word)
-      );
-
-      if (existingWord) {
-        const randomNumber = getRandomNumber();
-        updatedNumberedText[index] = word + randomNumber;
-      } else {
-        updatedNumberedText.push(word);
-      }
+      const randomNumber = getRandomNumber();
+      updatedNumberedText[index] = word + randomNumber;
     });
 
     setNumber(updatedNumberedText);
@@ -99,6 +113,7 @@ const SpeachRecognition: FC = () => {
 
   useEffect(() => {
     SpeechRecognition.startListening({ continuous: true });
+
     return () => {
       SpeechRecognition.stopListening();
     };
